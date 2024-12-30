@@ -24,7 +24,7 @@ def check_level():
 
 # Function to send a Discord notification
 def send_discord_notification(level):
-    message = f"🚀 Your level is now {level}, which exceeds 29.98!"
+    message = f"Fucker's level is now {level}, which exceeds 29.98!"
     payload = {"content": message}
 
     response = requests.post(webhook_url, json=payload)
