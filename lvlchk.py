@@ -22,12 +22,37 @@ def check_level():
         return level
     return None
 
-# Function to send a Discord notification
+# Function to send a Discord notification with an embed
 def send_discord_notification(level):
-    message = f"Fucker's level is now {level}, which exceeds 29.98!"
-    payload = {"content": message}
+    # Construct the embed content
+    embed = {
+        "embeds": [
+            {
+                "title": "Player Level Update",
+                "description": f"**Level Update** for Soze",
+                "color": 3066993,  # Embed color (green)
+                "fields": [
+                    {
+                        "name": "Level",
+                        "value": f"**{level}**",
+                        "inline": True
+                    },
+                    {
+                        "name": "Threshold",
+                        "value": "29.98",
+                        "inline": True
+                    }
+                ],
+                "footer": {
+                    "text": "Level checker bot"
+                },
+                "timestamp": "2024-12-30T12:00:00Z"
+            }
+        ]
+    }
 
-    response = requests.post(webhook_url, json=payload)
+    # Send the embed
+    response = requests.post(webhook_url, json=embed)
     print("Status code:", response.status_code)
     print("Response:", response.text)
 
@@ -47,6 +72,12 @@ if level and level > threshold:
     send_discord_notification(level)
 else:
     print(f"Level {level} is not high enough for notification.")
+
+if level and level > 29.8:  # Temporary test threshold
+    send_discord_notification(level)
+else:
+    print("Level not high enough for notification.")
+
 
 if level and level > 29.8:  # Temporary test threshold
     send_discord_notification(level)
