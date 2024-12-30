@@ -18,7 +18,7 @@ def check_level():
     match = re.search(r"Level:\s+([\d,.]+)", level_text)
     if match:
         level = float(match.group(1).replace(",", "."))
-        print(f"Level found: {level}")  # Debugging statement
+        print(f"Level found: {level} (type: {type(level)})")  # Debugging statement
         return level
     return None
 
@@ -38,7 +38,9 @@ def send_discord_notification(level):
 
 # Monitor the page
 level = check_level()
-if level and level > 28.8:
+print(f"Checking level: {level}")  # More debugging info
+if level and level > 28.8:  # Temporary test threshold
     send_discord_notification(level)
 else:
     print("Level not high enough for notification.")
+
