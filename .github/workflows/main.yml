@@ -11,16 +11,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      
-      # Install dependencies if necessary
+
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt  # If you have any dependencies listed in a requirements file
-      
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # Make sure this step is properly installing the dependencies
+
+      - name: Verify dependencies
+        run: |
+          pip show requests  # Verifies that the 'requests' module is installed
+
       - name: Run the script
-        run: python lvlchk.py  # Adjust the path if the script is inside a folder
+        run: python lvlchk.py  # Runs the Python script
