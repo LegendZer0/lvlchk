@@ -38,7 +38,7 @@ def send_discord_notification(level):
 
 # Monitor the page
 level = check_level()
-if level and level > 29.98:
+if level and level > 29.8:
     send_discord_notification(level)
 else:
     print("Level not high enough for notification.")
