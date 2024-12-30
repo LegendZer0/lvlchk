@@ -17,9 +17,5 @@ jobs:
         with:
           python-version: '3.x'
       
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt  # If you have any dependencies listed in a requirements file
-      
       - name: Run the script
         run: python lvlchk.py  # Replace with the actual script filename
