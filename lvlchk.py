@@ -17,7 +17,7 @@ def check_level():
     level_text = soup.find('td', {'id': 'profile_specs'}).text
     match = re.search(r"Level:\s+([\d,.]+)", level_text)
     if match:
-        level = float(match.group(1).replace(",", "."))
+        level = float(match.group(1).replace(",", ".").strip())
         print(f"Level found: {level} (type: {type(level)})")  # Debugging statement
         return level
     return None
@@ -39,6 +39,15 @@ def send_discord_notification(level):
 # Monitor the page
 level = check_level()
 print(f"Checking level: {level}")  # More debugging info
+
+# Compare with the desired threshold
+threshold = 28.8  # Adjust threshold as needed
+print(f"Comparing level {level} with threshold {threshold}")
+if level and level > threshold:
+    send_discord_notification(level)
+else:
+    print(f"Level {level} is not high enough for notification.")
+
 if level and level > 28.8:  # Temporary test threshold
     send_discord_notification(level)
 else:
