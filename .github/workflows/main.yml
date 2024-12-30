@@ -3,6 +3,7 @@ name: Run Python Script Every Minute
 on:
   schedule:
     - cron: "* * * * *"  # Every minute
+  workflow_dispatch:  # This allows manual triggers via the GitHub API
 
 jobs:
   run_script:
@@ -11,20 +12,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+      
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-
+      
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Make sure this step is properly installing the dependencies
-
-      - name: Verify dependencies
-        run: |
-          pip show requests  # Verifies that the 'requests' module is installed
-
+          pip install -r requirements.txt  # If you have any dependencies listed in a requirements file
+      
       - name: Run the script
-        run: python lvlchk.py  # Runs the Python script
+        run: python lvlchk.py
