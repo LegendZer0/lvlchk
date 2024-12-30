@@ -22,4 +22,4 @@ jobs:
           pip install -r requirements.txt  # If you have any dependencies listed in a requirements file
       
       - name: Run the script
-        run: lvlchk.py  # Replace with the actual script filename
+        run: python lvlchk.py  # Replace with the actual script filename
