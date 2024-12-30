@@ -1,0 +1,25 @@
+name: Run Python Script Every Minute
+
+on:
+  schedule:
+    - cron: "* * * * *"  # Every minute
+
+jobs:
+  run_script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt  # If you have any dependencies listed in a requirements file
+      
+      - name: Run the script
+        run: lvlchk.py  # Replace with the actual script filename
