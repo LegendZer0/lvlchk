@@ -45,7 +45,7 @@ def send_discord_notification(level):
                     },
                     {
                         "name": "Threshold",
-                        "value": "29.98",
+                        "value": f"{threshold}",
                         "inline": True
                     }
                 ],
