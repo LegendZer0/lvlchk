@@ -6,7 +6,7 @@ import re
 url = "https://bolt.astroempires.com/profile.aspx?player=5243"  # Replace with the actual URL
 
 # Discord webhook URL
-webhook_url = "https://discord.com/api/webhooks/1322773033189900483/rN3VEGvLiP_7x3lQAebBJwrFIk1miT_PJE9ayWTSajEA299oqQ75A_OmmWJCboODJ6C6"
+webhook_url = "https://discord.com/api/webhooks/1323448325629804626/D7ez7yyNq9bfEw28NSkoa3pB6xfQa7TSo8GmCBqJ2tMkSNFVOM4k7dplM3Tbt43VIUD0"
 
 # Threshold level
 threshold = 29.98
