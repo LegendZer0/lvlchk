@@ -8,6 +8,12 @@ url = "https://bolt.astroempires.com/profile.aspx?player=5243"  # Replace with t
 # Discord webhook URL
 webhook_url = "https://discord.com/api/webhooks/1322773033189900483/rN3VEGvLiP_7x3lQAebBJwrFIk1miT_PJE9ayWTSajEA299oqQ75A_OmmWJCboODJ6C6"
 
+# Threshold level
+threshold = 29.8
+
+# Store the last known level to avoid repeated notifications
+last_level = None
+
 # Function to check the level
 def check_level():
     response = requests.get(url)
@@ -66,12 +72,14 @@ level = check_level()
 print(f"Checking level: {level}")  # More debugging info
 
 # Compare with the desired threshold
-threshold = 29.8  # Adjust threshold as needed
-print(f"Comparing level {level} with threshold {threshold}")
-if level and level > threshold:
-    send_discord_notification(level)
+if level:
+    if level > threshold:
+        print(f"Level {level} is above the threshold of {threshold}, sending notification.")
+        send_discord_notification(level)  # Send notification if level is above the threshold
+    else:
+        print(f"Level {level} is below the threshold of {threshold}. No notification.")
 else:
-    print(f"Level {level} is not high enough for notification.")
+    print("Could not fetch the level from the profile.")
 
 
 
