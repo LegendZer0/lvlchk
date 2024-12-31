@@ -66,17 +66,13 @@ level = check_level()
 print(f"Checking level: {level}")  # More debugging info
 
 # Compare with the desired threshold
-threshold = 28.8  # Adjust threshold as needed
+threshold = 29.8  # Adjust threshold as needed
 print(f"Comparing level {level} with threshold {threshold}")
 if level and level > threshold:
     send_discord_notification(level)
 else:
     print(f"Level {level} is not high enough for notification.")
 
-if level and level > 29.8:  # Temporary test threshold
-    send_discord_notification(level)
-else:
-    print("Level not high enough for notification.")
 
 
 
