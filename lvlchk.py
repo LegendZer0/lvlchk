@@ -52,7 +52,7 @@ def send_discord_notification(level):
                 "footer": {
                     "text": "LZ Level Checker"
                 },
-                "Get Moving!"
+                "Get Moving"
             }
         ]
     }
