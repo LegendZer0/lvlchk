@@ -79,8 +79,4 @@ else:
     print("Level not high enough for notification.")
 
 
-if level and level > 29.8:  # Temporary test threshold
-    send_discord_notification(level)
-else:
-    print("Level not high enough for notification.")
 
