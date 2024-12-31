@@ -40,7 +40,7 @@ def send_discord_notification(level):
             {
                 "title": "Player Level Update",
                 "description": f"**Level Update** for Soze",
-                "color": b80e02,  # Embed color (red)
+                "color": 11580418,  # Embed color (red)
                 "fields": [
                     {
                         "name": "Level",
