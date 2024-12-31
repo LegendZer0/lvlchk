@@ -9,7 +9,7 @@ url = "https://bolt.astroempires.com/profile.aspx?player=5243"  # Replace with t
 webhook_url = "https://discord.com/api/webhooks/1323448325629804626/D7ez7yyNq9bfEw28NSkoa3pB6xfQa7TSo8GmCBqJ2tMkSNFVOM4k7dplM3Tbt43VIUD0"
 
 # Threshold level
-threshold = 28.98
+threshold = 29.98
 
 # Store the last known level to avoid repeated notifications
 last_level = None
