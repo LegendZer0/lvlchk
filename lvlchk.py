@@ -29,14 +29,18 @@ def check_level():
     return None
 
 # Function to send a Discord notification with an embed
+import datetime
+
+# Function to send a Discord notification with an embed
 def send_discord_notification(level):
     # Construct the embed content
     embed = {
+        "content": f"<@&1275106617825693727>",  # Ping the role
         "embeds": [
             {
                 "title": "Player Level Update",
                 "description": f"**Level Update** for Soze",
-                "color": 3066993,  # Embed color (green)
+                "color": b80e02,  # Embed color (red)
                 "fields": [
                     {
                         "name": "Level",
@@ -45,14 +49,14 @@ def send_discord_notification(level):
                     },
                     {
                         "name": "Threshold",
-                        "value": f"{threshold}",
+                        "value": f"**{threshold}**",
                         "inline": True
                     }
                 ],
                 "footer": {
                     "text": "LZ Level Checker"
                 },
-                "timestamp": "2024-12-30T12:00:00Z"
+                "timestamp": datetime.datetime.utcnow().isoformat() + "Z"  # Generate dynamic timestamp
             }
         ]
     }
@@ -66,6 +70,7 @@ def send_discord_notification(level):
         print("Notification sent successfully!")
     else:
         print("Failed to send notification.")
+
 
 # Monitor the page
 level = check_level()
