@@ -50,9 +50,9 @@ def send_discord_notification(level):
                     }
                 ],
                 "footer": {
-                    "text": "Level checker bot"
+                    "text": "LZ Level Checker"
                 },
-                "timestamp": "2024-12-30T12:00:00Z"
+                "Get Moving!"
             }
         ]
     }
