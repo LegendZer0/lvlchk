@@ -52,7 +52,7 @@ def send_discord_notification(level):
                 "footer": {
                     "text": "LZ Level Checker"
                 },
-                "Get Moving"
+                "thumbnail": "https#COLON#//bolt.astroempires.com/users/avatars/players/5243_3675208.jpeg"
             }
         ]
     }
