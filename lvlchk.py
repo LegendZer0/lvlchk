@@ -9,7 +9,7 @@ url = "https://bolt.astroempires.com/profile.aspx?player=5243"  # Replace with t
 webhook_url = "https://discord.com/api/webhooks/1322773033189900483/rN3VEGvLiP_7x3lQAebBJwrFIk1miT_PJE9ayWTSajEA299oqQ75A_OmmWJCboODJ6C6"
 
 # Threshold level
-threshold = 29.8
+threshold = 29.98
 
 # Store the last known level to avoid repeated notifications
 last_level = None
@@ -52,7 +52,7 @@ def send_discord_notification(level):
                 "footer": {
                     "text": "LZ Level Checker"
                 },
-                "thumbnail": "https#COLON#//bolt.astroempires.com/users/avatars/players/5243_3675208.jpeg"
+                "timestamp": "2024-12-30T12:00:00Z"
             }
         ]
     }
