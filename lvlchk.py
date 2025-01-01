@@ -54,6 +54,7 @@ def update_level(level):
 
 # Function to scrape the level from the provided URL
 def scrape_page():
+    print(f"Scrape URL: {scrape_url}")  # Debugging line to check the URL
     response = requests.get(scrape_url)
     soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -64,6 +65,7 @@ def scrape_page():
         level = float(match.group(1).replace(",", ".").strip())
         return level
     return None
+
 
 # Function to send a Discord notification with an embed
 def send_discord_notification(level):
