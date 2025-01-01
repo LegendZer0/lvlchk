@@ -2,18 +2,34 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import datetime
+import os
 
 # URL to monitor
-url = "https://bolt.astroempires.com/profile.aspx?player=5243"  # Replace with the actual URL
+url = "https://bolt.astroempires.com/profile.aspx?player=5243"
 
 # Discord webhook URL
 webhook_url = "https://discord.com/api/webhooks/1323448325629804626/D7ez7yyNq9bfEw28NSkoa3pB6xfQa7TSo8GmCBqJ2tMkSNFVOM4k7dplM3Tbt43VIUD0"
 
 # Threshold level
-threshold = 30.00
+threshold = 29.98
 
-# Store the last known level to avoid repeated notifications
-last_level = None
+# File to store the last level
+last_level_file = "last_level.txt"
+
+# Function to get the last level from the file
+def get_last_level():
+    if os.path.exists(last_level_file):
+        with open(last_level_file, "r") as file:
+            try:
+                return float(file.read().strip())
+            except ValueError:
+                return None
+    return None
+
+# Function to save the last level to the file
+def save_last_level(level):
+    with open(last_level_file, "w") as file:
+        file.write(str(level))
 
 # Function to check the level
 def check_level():
@@ -31,7 +47,6 @@ def check_level():
 
 # Function to send a Discord notification with an embed
 def send_discord_notification(level):
-    # Construct the embed content
     embed = {
         "content": f"<@&1275106617825693727>",  # Ping the role
         "embeds": [
@@ -59,7 +74,6 @@ def send_discord_notification(level):
         ]
     }
 
-    # Send the embed
     response = requests.post(webhook_url, json=embed)
     print("Status code:", response.status_code)
     print("Response:", response.text)
@@ -71,17 +85,16 @@ def send_discord_notification(level):
 
 # Monitor the page and compare levels
 def monitor_level():
-    global last_level  # Use the global last_level variable
+    last_level = get_last_level()
     level = check_level()
-    print(f"Checking level: {level}")  # More debugging info
+    print(f"Checking level: {level}")  # Debugging information
 
-    # Compare with the desired threshold
     if level:
         if level >= threshold:
-            if last_level is None or level != last_level:  # Only notify if the level has changed
+            if last_level is None or level != last_level:  # Notify only if the level is different
                 print(f"Level {level} is above the threshold of {threshold} and different from last_level {last_level}. Sending notification.")
                 send_discord_notification(level)
-                last_level = level  # Update last_level
+                save_last_level(level)  # Save the new level
             else:
                 print(f"Level {level} is the same as the last notified level {last_level}. No notification.")
         else:
