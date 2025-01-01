@@ -23,4 +23,11 @@ jobs:
           pip install -r requirements.txt  # If you have any dependencies listed in a requirements file
       
       - name: Run the script
+        env:
+          SCRAPE_URL: ${{ secrets.SCRAPE_URL }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: python lvlchk.py
