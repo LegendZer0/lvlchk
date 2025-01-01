@@ -24,13 +24,19 @@ def get_last_level():
 
 def update_last_level(level):
     try:
-        response = requests.put(last_level_url, data=str(level))
+        # Send a POST request to the PHP script
+        response = requests.post(
+            "http://bothost.infinityfreeapp.com/lvl_update.php",
+            data={"level": str(level)}
+        )
         if response.status_code == 200:
             print(f"Successfully updated last_level.txt to {level}.")
         else:
             print(f"Failed to update last_level.txt. Status code: {response.status_code}")
+            print(f"Response: {response.text}")
     except Exception as e:
         print(f"Error while updating last_level.txt: {e}")
+
 
 def check_level():
     response = requests.get(url)
