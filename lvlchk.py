@@ -1,60 +1,60 @@
+import os
 import mysql.connector
 import requests
-from bs4 import BeautifulSoup
-import re
 import datetime
+import re
+from bs4 import BeautifulSoup
 
-# URL to monitor
-url = "https://bolt.astroempires.com/profile.aspx?player=5243"  # Replace with the actual URL
+# Access secrets from GitHub Actions environment variables
+db_host = os.getenv('DB_HOST')
+db_user = os.getenv('DB_USER')
+db_password = os.getenv('DB_PASSWORD')
+db_name = os.getenv('DB_NAME')
+discord_webhook = os.getenv('DISCORD_WEBHOOK')
+scrape_url = os.getenv('SCRAPE_URL')
 
-# Discord webhook URL
-webhook_url = "https://discord.com/api/webhooks/1323448325629804626/D7ez7yyNq9bfEw28NSkoa3pB6xfQa7TSo8GmCBqJ2tMkSNFVOM4k7dplM3Tbt43VIUD0"
-
-# MySQL connection details
+# Function to connect to the MySQL database using the environment variables
 def connect_to_db():
     return mysql.connector.connect(
-        host="sql5.freesqldatabase.com",
-        user="sql5755167",
-        password="5pCWmabjd6",
-        database="sql5755167"
+        host=db_host,
+        user=db_user,
+        password=db_password,
+        database=db_name
     )
 
-# Threshold level
-threshold = 29.98
-
-# Function to get the last stored level from the database
+# Function to fetch the last level from the database
 def get_last_level():
     try:
         conn = connect_to_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT level FROM last_level ORDER BY timestamp DESC LIMIT 1")  # Updated table name
+        cursor.execute("SELECT level FROM last_level ORDER BY timestamp DESC LIMIT 1")
         last_level = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
         if last_level:
-            return last_level[0]
+            return float(last_level[0])
         return None
     except mysql.connector.Error as err:
         print(f"Error fetching last level: {err}")
         return None
-    finally:
-        cursor.close()
-        conn.close()
 
 # Function to update the level in the database
 def update_level(level):
     try:
         conn = connect_to_db()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO last_level (level, timestamp) VALUES (%s, %s)", (level, datetime.datetime.utcnow()))  # Updated table name
+        cursor.execute("INSERT INTO last_level (level, timestamp) VALUES (%s, %s)", (level, datetime.datetime.utcnow()))
         conn.commit()
-    except mysql.connector.Error as err:
-        print(f"Error while updating level: {err}")
-    finally:
         cursor.close()
         conn.close()
+        print(f"Level {level} updated successfully in the database.")
+    except mysql.connector.Error as err:
+        print(f"Error while updating level: {err}")
 
-# Function to check the level
-def check_level():
-    response = requests.get(url)
+# Function to scrape the level from the provided URL
+def scrape_page():
+    response = requests.get(scrape_url)
     soup = BeautifulSoup(response.text, 'html.parser')
 
     # Locate the level section
@@ -62,7 +62,6 @@ def check_level():
     match = re.search(r"Level:\s+([\d,.]+)", level_text)
     if match:
         level = float(match.group(1).replace(",", ".").strip())
-        print(f"Level found: {level} (type: {type(level)})")  # Debugging statement
         return level
     return None
 
@@ -90,39 +89,43 @@ def send_discord_notification(level):
                 "footer": {
                     "text": "LZ Level Checker"
                 },
-                "timestamp": datetime.datetime.utcnow().isoformat() + "Z"  # Generate dynamic timestamp
+                "timestamp": datetime.datetime.utcnow().isoformat() + "Z"
             }
         ]
     }
 
-    # Send the embed
-    response = requests.post(webhook_url, json=embed)
+    response = requests.post(discord_webhook, json=embed)
     print("Status code:", response.status_code)
-    print("Response:", response.text)
 
     if response.status_code == 204:
         print("Notification sent successfully!")
     else:
         print("Failed to send notification.")
 
-# Monitor the page
-level = check_level()
-print(f"Checking level: {level}")  # More debugging info
+# Main function to check the level and update if necessary
+def check_level():
+    current_level = scrape_page()
+    if current_level is None:
+        print("Could not fetch the level from the profile.")
+        return
 
-# Get the last stored level from the database
-last_level = get_last_level()
-print(f"Last level: {last_level}")  # Debugging info
+    print(f"Current level: {current_level}")
+    last_level = get_last_level()
 
-# Update level regardless of threshold
-if level != last_level:
-    print(f"Level has changed from {last_level} to {level}, updating database.")
-    update_level(level)  # Update the database with the new level
+    if last_level is None:
+        print("No previous level found. Setting the current level.")
+        update_level(current_level)
+        return
 
-    # Compare with the desired threshold
-    if level >= threshold:
-        print(f"Level {level} is above the threshold of {threshold}, sending notification.")
-        send_discord_notification(level)  # Send notification if level is above the threshold
+    print(f"Last level: {last_level}")
+
+    if current_level != last_level:
+        print(f"Level has changed from {last_level} to {current_level}, updating database.")
+        update_level(current_level)
+        send_discord_notification(current_level)
     else:
-        print(f"Level {level} is below the threshold of {threshold}. No notification.")
-else:
-    print(f"Level {level} has not changed since the last check. No update.")
+        print(f"Level {current_level} is the same as the last level, no update needed.")
+
+# Run the script
+if __name__ == "__main__":
+    check_level()
