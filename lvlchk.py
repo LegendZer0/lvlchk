@@ -119,7 +119,7 @@ if level != last_level:
     update_level(level)  # Update the database with the new level
 
     # Compare with the desired threshold
-    if level > threshold:
+    if level >= threshold:
         print(f"Level {level} is above the threshold of {threshold}, sending notification.")
         send_discord_notification(level)  # Send notification if level is above the threshold
     else:
