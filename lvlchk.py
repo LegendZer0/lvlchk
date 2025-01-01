@@ -22,10 +22,10 @@ threshold = 29.98
 # Function to connect to the database
 def connect_to_db():
     return mysql.connector.connect(
-        host="sql207.infinityfree.com",
-        user="if0_38002499",
-        password="Eva20181921",
-        database="if0_38002499_lvlchk_db"
+        host="sql5.freesqldatabase.com",
+        user="sql5755167",
+        password="5pCWmabjd6",
+        database="sql5755167"
     )
 
 # Function to get the last level from the database
