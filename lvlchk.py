@@ -27,7 +27,7 @@ def get_last_level():
     try:
         conn = connect_to_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT level FROM levels ORDER BY timestamp DESC LIMIT 1")
+        cursor.execute("SELECT level FROM last_level ORDER BY timestamp DESC LIMIT 1")  # Updated table name
         last_level = cursor.fetchone()
         if last_level:
             return last_level[0]
@@ -44,7 +44,7 @@ def update_level(level):
     try:
         conn = connect_to_db()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO levels (level, timestamp) VALUES (%s, %s)", (level, datetime.datetime.utcnow()))
+        cursor.execute("INSERT INTO last_level (level, timestamp) VALUES (%s, %s)", (level, datetime.datetime.utcnow()))  # Updated table name
         conn.commit()
     except mysql.connector.Error as err:
         print(f"Error while updating level: {err}")
