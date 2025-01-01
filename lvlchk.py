@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+import datetime
 
 # URL to monitor
 url = "https://bolt.astroempires.com/profile.aspx?player=5243"  # Replace with the actual URL
@@ -27,9 +28,6 @@ def check_level():
         print(f"Level found: {level} (type: {type(level)})")  # Debugging statement
         return level
     return None
-
-# Function to send a Discord notification with an embed
-import datetime
 
 # Function to send a Discord notification with an embed
 def send_discord_notification(level):
@@ -71,21 +69,25 @@ def send_discord_notification(level):
     else:
         print("Failed to send notification.")
 
+# Monitor the page and compare levels
+def monitor_level():
+    global last_level  # Use the global last_level variable
+    level = check_level()
+    print(f"Checking level: {level}")  # More debugging info
 
-# Monitor the page
-level = check_level()
-print(f"Checking level: {level}")  # More debugging info
-
-# Compare with the desired threshold
-if level:
-    if level > threshold:
-        print(f"Level {level} is above the threshold of {threshold}, sending notification.")
-        send_discord_notification(level)  # Send notification if level is above the threshold
+    # Compare with the desired threshold
+    if level:
+        if level >= threshold:
+            if last_level is None or level != last_level:  # Only notify if the level has changed
+                print(f"Level {level} is above the threshold of {threshold} and different from last_level {last_level}. Sending notification.")
+                send_discord_notification(level)
+                last_level = level  # Update last_level
+            else:
+                print(f"Level {level} is the same as the last notified level {last_level}. No notification.")
+        else:
+            print(f"Level {level} is below the threshold of {threshold}. No notification.")
     else:
-        print(f"Level {level} is below the threshold of {threshold}. No notification.")
-else:
-    print("Could not fetch the level from the profile.")
+        print("Could not fetch the level from the profile.")
 
-
-
-
+# Run the monitor function
+monitor_level()
