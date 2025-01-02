@@ -12,6 +12,7 @@ db_password = os.getenv('DB_PASSWORD')
 db_name = os.getenv('DB_NAME')
 discord_webhook = os.getenv('DISCORD_WEBHOOK')
 scrape_url = os.getenv('SCRAPE_URL')
+threshold = 29.98
 
 # Function to connect to the MySQL database using the environment variables
 def connect_to_db():
