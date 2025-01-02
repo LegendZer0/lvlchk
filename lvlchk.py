@@ -12,21 +12,28 @@ db_password = os.getenv('DB_PASSWORD')
 db_name = os.getenv('DB_NAME')
 discord_webhook = os.getenv('DISCORD_WEBHOOK')
 scrape_url = os.getenv('SCRAPE_URL')
-threshold = 29.98
+threshold = float(os.getenv('THRESHOLD', 29.98))  # Use a default if not set
 
 # Function to connect to the MySQL database using the environment variables
 def connect_to_db():
-    return mysql.connector.connect(
-        host=db_host,
-        user=db_user,
-        password=db_password,
-        database=db_name
-    )
+    try:
+        return mysql.connector.connect(
+            host=db_host,
+            user=db_user,
+            password=db_password,
+            database=db_name
+        )
+    except mysql.connector.Error as err:
+        print(f"Error connecting to database: {err}")
+        return None
 
 # Function to fetch the last level from the database
 def get_last_level():
     try:
         conn = connect_to_db()
+        if conn is None:
+            return None
+
         cursor = conn.cursor()
         cursor.execute("SELECT level FROM last_level ORDER BY timestamp DESC LIMIT 1")
         last_level = cursor.fetchone()
@@ -44,8 +51,14 @@ def get_last_level():
 def update_level(level):
     try:
         conn = connect_to_db()
+        if conn is None:
+            return
+
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO last_level (level, timestamp) VALUES (%s, %s)", (level, datetime.datetime.utcnow()))
+        cursor.execute(
+            "INSERT INTO last_level (level, timestamp) VALUES (%s, %s)",
+            (level, datetime.datetime.utcnow())
+        )
         conn.commit()
         cursor.close()
         conn.close()
@@ -55,18 +68,23 @@ def update_level(level):
 
 # Function to scrape the level from the provided URL
 def scrape_page():
-    print(f"Scrape URL: {scrape_url}")  # Debugging line to check the URL
-    response = requests.get(scrape_url)
-    soup = BeautifulSoup(response.text, 'html.parser')
+    try:
+        print(f"Scrape URL: {scrape_url}")  # Debugging line to check the URL
+        response = requests.get(scrape_url)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-    # Locate the level section
-    level_text = soup.find('td', {'id': 'profile_specs'}).text
-    match = re.search(r"Level:\s+([\d,.]+)", level_text)
-    if match:
-        level = float(match.group(1).replace(",", ".").strip())
-        return level
-    return None
-
+        # Locate the level section
+        level_text = soup.find('td', {'id': 'profile_specs'}).text
+        match = re.search(r"Level:\s+([\d,.]+)", level_text)
+        if match:
+            level = float(match.group(1).replace(",", ".").strip())
+            return level
+        print("Could not find level data on the page.")
+        return None
+    except requests.RequestException as err:
+        print(f"Error fetching the page: {err}")
+        return None
 
 # Function to send a Discord notification with an embed
 def send_discord_notification(level):
@@ -97,13 +115,12 @@ def send_discord_notification(level):
         ]
     }
 
-    response = requests.post(discord_webhook, json=embed)
-    print("Status code:", response.status_code)
-
-    if response.status_code == 204:
+    try:
+        response = requests.post(discord_webhook, json=embed)
+        response.raise_for_status()
         print("Notification sent successfully!")
-    else:
-        print("Failed to send notification.")
+    except requests.RequestException as err:
+        print(f"Failed to send notification: {err}")
 
 # Main function to check the level and update if necessary
 def check_level():
@@ -125,7 +142,8 @@ def check_level():
     if current_level != last_level:
         print(f"Level has changed from {last_level} to {current_level}, updating database.")
         update_level(current_level)
-        send_discord_notification(current_level)
+        if current_level > threshold:
+            send_discord_notification(current_level)
     else:
         print(f"Level {current_level} is the same as the last level, no update needed.")
 
